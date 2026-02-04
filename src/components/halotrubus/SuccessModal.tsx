@@ -24,7 +24,7 @@ const SuccessModal: React.FC<SuccessModalProps> = ({ isOpen, onClose, type, mess
       title: 'Konsultasi Dipesan!',
       description: message || 'Konsultasi sudah dipesan',
       buttonText: 'Lihat Detail',
-      color: 'blue'
+      color: 'green'
     },
     checkout: {
       icon: CheckCircle,
