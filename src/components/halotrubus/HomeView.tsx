@@ -125,9 +125,9 @@ const HomeView: React.FC<HomeViewProps> = ({
       <div className="px-6 mt-12">
         <div className="mb-6 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <h3 className="text-xl font-black tracking-tight text-gray-900">Flash Sale</h3>
+            <h3 className="text-xl font-black tracking-tight text-gray-900">Produk Terlaris</h3>
             <div className="flex items-center gap-1 rounded-full bg-red-500 px-3 py-1 text-[9px] font-black text-white shadow-lg shadow-red-200 uppercase tracking-widest">
-              <Zap size={10} className="fill-white" /> Live
+              <Zap size={10} className="fill-white" /> Hot
             </div>
           </div>
           <button onClick={onViewAllProducts} className="flex items-center gap-1 text-[11px] font-black uppercase tracking-widest text-green-600 hover:text-green-700">
