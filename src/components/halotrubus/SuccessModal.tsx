@@ -23,7 +23,7 @@ const SuccessModal: React.FC<SuccessModalProps> = ({ isOpen, onClose, type, mess
       icon: Calendar,
       title: 'Konsultasi Dipesan!',
       description: message || 'Konsultasi sudah dipesan',
-      buttonText: 'Lihat Detail',
+      buttonText: 'Lanjut ke pembayaran',
       color: 'green'
     },
     checkout: {

@@ -188,7 +188,7 @@ const ConsultationModal: React.FC<ConsultationModalProps> = ({
             >
               <div className="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 skew-x-12" />
               <span className="flex items-center justify-center gap-2">
-                {expert.isOnline ? 'Lanjut Bayar' : 'Offline'}
+                {expert.isOnline ? 'Lanjut' : 'Offline'}
                 <ChevronRight size={18} />
               </span>
             </button>
@@ -204,8 +204,7 @@ const ConsultationModal: React.FC<ConsultationModalProps> = ({
                 onClick={handleBook}
                 className="flex-1 py-5 bg-green-600 text-white rounded-[2rem] font-black uppercase text-xs tracking-[0.2em] hover:bg-green-700 shadow-xl shadow-green-100 transition-all active:scale-95 flex items-center justify-center gap-2"
               >
-                <Zap size={16} className="fill-white" />
-                Bayar Sekarang
+                Konfirmasi & Boking
               </button>
             </div>
           )}
