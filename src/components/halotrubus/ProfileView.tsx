@@ -3,9 +3,7 @@ import {
   User, Settings, ShoppingBag, MessageCircle, Heart, 
   CreditCard, Bell, HelpCircle, LogOut, ChevronRight,
   Edit2, LogIn, ShieldCheck, FileText, Wallet, ArrowLeft,
-  LucideIcon, Star, Ticket, PlusCircle, History, X, CheckCircle2,
-  Smartphone, Building2, QrCode,
-  Zap
+  LucideIcon
 } from 'lucide-react';
 
 // --- DATA DUMMY ---
@@ -17,14 +15,6 @@ const ORDER_HISTORY_DUMMY = [
   { id: 'TRX-2024-005', date: '02 Jan 2024', status: 'Selesai', total: 175000, items: 'Pot Tanaman Keramik Minimalis', image: 'https://images.unsplash.com/photo-1485841890310-6a055c88698a?w=200' }
 ];
 
-// Dummy Riwayat Pemakaian & Topup
-const POINT_HISTORY_DUMMY = [
-  { id: 'TX-9901', title: 'Top Up Saldo', type: 'in', amount: 500000, date: '04 Feb 2024', method: 'QRIS' },
-  { id: 'TX-9882', title: 'Bayar Konsultasi Ahli', type: 'out', amount: 75000, date: '03 Feb 2024', method: 'TaniPoin' },
-  { id: 'TX-9850', title: 'Beli Pupuk NPK Booster', type: 'out', amount: 245000, date: '02 Feb 2024', method: 'TaniPoin' },
-  { id: 'TX-9812', title: 'Top Up Saldo', type: 'in', amount: 1000000, date: '01 Feb 2024', method: 'Bank Transfer' },
-];
-
 // --- INTERFACES ---
 interface MenuItem {
   icon: LucideIcon;
@@ -32,7 +22,7 @@ interface MenuItem {
   badge?: string;
   color: string;
   bg: string;
-  action?: () => void;
+  action?: () => void; // Opsional agar tidak error
 }
 
 interface UserData {
@@ -43,7 +33,6 @@ interface UserData {
   role: 'consumer' | 'expert';
   avatar: string;
   isVerified: boolean;
-  points: number;
 }
 
 interface ProfileViewProps {
@@ -56,22 +45,34 @@ interface ProfileViewProps {
 }
 
 const ProfileView: React.FC<ProfileViewProps> = ({ 
-  userRole, onRoleChange, isLoggedIn, userData, onLoginClick, onLogout 
+  userRole, 
+  onRoleChange, 
+  isLoggedIn, 
+  userData, 
+  onLoginClick,
+  onLogout 
 }) => {
-  const [currentView, setCurrentView] = useState<'profile' | 'orders' | 'wallet'>('profile');
-  const [topupStep, setTopupStep] = useState<'none' | 'nominal' | 'method'>('none');
-  const [selectedAmount, setSelectedAmount] = useState(0);
+  const [currentView, setCurrentView] = useState<'profile' | 'orders'>('profile');
 
   const formatCurrency = (val: number) => {
     return new Intl.NumberFormat('id-ID', {
-      style: 'currency', currency: 'IDR', minimumFractionDigits: 0,
+      style: 'currency',
+      currency: 'IDR',
+      minimumFractionDigits: 0,
     }).format(val);
   };
 
+  // Menu Items dengan Tipe Data MenuItem[]
   const consumerMenuItems: MenuItem[] = [
-    { icon: ShoppingBag, label: 'Pesanan Saya', badge: '2', color: 'text-green-600', bg: 'bg-green-50', action: () => setCurrentView('orders') },
+    { 
+      icon: ShoppingBag, 
+      label: 'Pesanan Saya', 
+      badge: '2', 
+      color: 'text-green-600', 
+      bg: 'bg-green-50',
+      action: () => setCurrentView('orders')
+    },
     { icon: MessageCircle, label: 'Riwayat Konsultasi', badge: '3', color: 'text-blue-600', bg: 'bg-blue-50' },
-    { icon: Ticket, label: 'Voucher Saya', color: 'text-orange-600', bg: 'bg-orange-50' },
     { icon: Heart, label: 'Produk Favorit', color: 'text-red-600', bg: 'bg-red-50' },
     { icon: CreditCard, label: 'Metode Pembayaran', color: 'text-purple-600', bg: 'bg-purple-50' },
   ];
@@ -88,12 +89,13 @@ const ProfileView: React.FC<ProfileViewProps> = ({
     { icon: HelpCircle, label: 'Pusat Bantuan', color: 'text-gray-400', bg: 'bg-gray-50' },
   ];
 
-  // --- VIEW: RIWAYAT PESANAN ---
   if (currentView === 'orders') {
     return (
       <div className="min-h-screen bg-gray-50 pb-24 font-sans animate-in slide-in-from-right duration-300">
         <div className="bg-white px-6 pt-12 pb-6 flex items-center gap-4 sticky top-0 z-30 shadow-sm border-b">
-          <button onClick={() => setCurrentView('profile')} className="p-3 bg-gray-50 rounded-2xl active:scale-90 transition-transform"><ArrowLeft size={20} /></button>
+          <button onClick={() => setCurrentView('profile')} className="p-3 bg-gray-50 rounded-2xl active:scale-90 transition-transform">
+            <ArrowLeft size={20} />
+          </button>
           <h2 className="text-xl font-black text-gray-900 tracking-tight">Riwayat Pesanan</h2>
         </div>
         <div className="p-6 space-y-4">
@@ -103,7 +105,10 @@ const ProfileView: React.FC<ProfileViewProps> = ({
               <div className="flex-1 flex flex-col justify-between py-1">
                 <div className="flex justify-between items-start">
                   <p className="text-[10px] font-black text-gray-400 uppercase">{order.id}</p>
-                  <span className={`text-[10px] font-black px-2 py-1 rounded-lg ${order.status === 'Selesai' ? 'bg-green-50 text-green-600' : order.status === 'Dibatalkan' ? 'bg-red-50 text-red-600' : 'bg-blue-50 text-blue-600'}`}>{order.status}</span>
+                  <span className={`text-[10px] font-black px-2 py-1 rounded-lg ${
+                    order.status === 'Selesai' ? 'bg-green-50 text-green-600' : 
+                    order.status === 'Dibatalkan' ? 'bg-red-50 text-red-600' : 'bg-blue-50 text-blue-600'
+                  }`}>{order.status}</span>
                 </div>
                 <h4 className="font-bold text-gray-800 text-sm line-clamp-1">{order.items}</h4>
                 <div className="flex justify-between items-end mt-1">
@@ -121,76 +126,31 @@ const ProfileView: React.FC<ProfileViewProps> = ({
     );
   }
 
-  // --- VIEW: RIWAYAT WALLET / SALDO ---
-  if (currentView === 'wallet') {
-    return (
-      <div className="min-h-screen bg-gray-50 pb-24 font-sans animate-in slide-in-from-right duration-300">
-        <div className="bg-white px-6 pt-12 pb-6 flex items-center gap-4 sticky top-0 z-30 shadow-sm border-b">
-          <button onClick={() => setCurrentView('profile')} className="p-3 bg-gray-50 rounded-2xl active:scale-90 transition-transform"><ArrowLeft size={20} /></button>
-          <h2 className="text-xl font-black text-gray-900 tracking-tight">Riwayat Saldo</h2>
-        </div>
-        <div className="p-6 space-y-4">
-          {POINT_HISTORY_DUMMY.map((log) => (
-            <div key={log.id} className="bg-white rounded-[2rem] p-5 shadow-sm border border-gray-100 flex items-center gap-4">
-              <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${log.type === 'in' ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'}`}>
-                {log.type === 'in' ? <PlusCircle size={24} /> : <ShoppingBag size={24} />}
-              </div>
-              <div className="flex-1">
-                <p className="text-[10px] font-black text-gray-400 uppercase">{log.date} • {log.method}</p>
-                <h4 className="font-bold text-gray-800 text-sm">{log.title}</h4>
-                <p className={`text-sm font-black ${log.type === 'in' ? 'text-green-600' : 'text-red-600'}`}>
-                  {log.type === 'in' ? '+' : '-'}{formatCurrency(log.amount)}
-                </p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    );
-  }
-
-  // --- VIEW: NOT LOGGED IN ---
   if (!isLoggedIn) {
     return (
-      <div className="min-h-screen bg-gray-50 pb-24 font-sans animate-in fade-in duration-700">
-        <div className="bg-white px-8 pt-20 pb-12 rounded-b-[4rem] shadow-sm relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-green-50 rounded-full -mr-32 -mt-32 z-0" />
-          <div className="absolute bottom-0 left-0 w-32 h-32 bg-blue-50 rounded-full -ml-16 -mb-16 z-0" />
-          <div className="relative z-10 text-center">
-            <div className="w-28 h-28 bg-gradient-to-br from-green-400 to-green-600 rounded-[3rem] flex items-center justify-center mx-auto mb-8 shadow-2xl shadow-green-200 rotate-3">
-              <User size={56} className="text-white" />
+      <div className="min-h-screen bg-gray-50 pb-24 font-sans animate-in fade-in duration-500">
+        <div className="bg-white px-6 pt-12 pb-10 rounded-b-[3rem] shadow-sm">
+          <div className="text-center">
+            <div className="w-24 h-24 bg-gray-100 rounded-[2.5rem] flex items-center justify-center mx-auto mb-6">
+              <User size={48} className="text-gray-300" />
             </div>
-            <h1 className="text-3xl font-black text-gray-900 mb-3 tracking-tight leading-tight">Mulai Perjalanan <br/> Pertanian Anda</h1>
-            <p className="text-gray-500 text-sm mb-10 font-medium max-w-[240px] mx-auto leading-relaxed">Bergabunglah dengan komunitas petani modern dan akses ribuan solusi pertanian.</p>
-            <button onClick={onLoginClick} className="w-full py-5 bg-green-500 text-white font-black uppercase tracking-[0.15em] text-xs rounded-2xl shadow-xl active:scale-[0.97] transition-all flex items-center justify-center gap-3">
-              <LogIn size={18} /> Masuk ke Akun
+            <h1 className="text-2xl font-black text-gray-900 mb-2">Mulai Perjalanan Anda</h1>
+            <p className="text-gray-400 text-sm mb-8 font-medium">Masuk untuk akses konsultasi ahli dan belanja kebutuhan tani</p>
+            <button onClick={onLoginClick} className="w-full py-4 bg-green-500 text-white font-black uppercase tracking-widest rounded-2xl shadow-xl flex items-center justify-center gap-3">
+              <LogIn size={20} /> Masuk Sekarang
             </button>
-            <p className="mt-6 text-[11px] font-bold text-gray-400 uppercase tracking-widest">Belum punya akun? <span className="text-green-600 underline">Daftar Sekarang</span></p>
           </div>
         </div>
-        <div className="p-6">
-          <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-6 ml-2 text-center">Mengapa Bergabung?</h3>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="bg-white rounded-[2.5rem] p-6 shadow-sm border border-gray-100 flex flex-col items-center text-center">
-               <div className="w-14 h-14 bg-green-50 text-green-500 rounded-2xl flex items-center justify-center mb-4"><ShoppingBag size={24}/></div>
-               <h4 className="font-black text-gray-800 text-[11px] uppercase mb-1">Belanja Tani</h4>
-               <p className="text-[10px] text-gray-400 font-bold leading-relaxed">Akses produk original & berkualitas</p>
-            </div>
-            <div className="bg-white rounded-[2.5rem] p-6 shadow-sm border border-gray-100 flex flex-col items-center text-center">
-               <div className="w-14 h-14 bg-blue-50 text-blue-500 rounded-2xl flex items-center justify-center mb-4"><MessageCircle size={24}/></div>
-               <h4 className="font-black text-gray-800 text-[11px] uppercase mb-1">Tanya Ahli</h4>
-               <p className="text-[10px] text-gray-400 font-bold leading-relaxed">Konsultasi masalah lahan secara privat</p>
-            </div>
-            <div className="bg-white rounded-[2.5rem] p-6 shadow-sm border border-gray-100 flex flex-col items-center text-center">
-               <div className="w-14 h-14 bg-orange-50 text-orange-500 rounded-2xl flex items-center justify-center mb-4"><Star size={24}/></div>
-               <h4 className="font-black text-gray-800 text-[11px] uppercase mb-1">TaniPoints</h4>
-               <p className="text-[10px] text-gray-400 font-bold leading-relaxed">Kumpulkan poin & klaim voucher</p>
-            </div>
-            <div className="bg-white rounded-[2.5rem] p-6 shadow-sm border border-gray-100 flex flex-col items-center text-center">
-               <div className="w-14 h-14 bg-purple-50 text-purple-500 rounded-2xl flex items-center justify-center mb-4"><ShieldCheck size={24}/></div>
-               <h4 className="font-black text-gray-800 text-[11px] uppercase mb-1">Terverifikasi</h4>
-               <p className="text-[10px] text-gray-400 font-bold leading-relaxed">Komunitas aman & terpercaya</p>
-            </div>
+        <div className="p-6 grid grid-cols-2 gap-4">
+          <div className="bg-white rounded-[2rem] p-5 shadow-sm border border-gray-50">
+             <div className="w-10 h-10 bg-green-50 text-green-500 rounded-xl flex items-center justify-center mb-3"><ShoppingBag size={20}/></div>
+             <h4 className="font-black text-gray-800 text-xs uppercase tracking-tight">Belanja Mudah</h4>
+             <p className="text-[10px] text-gray-400 mt-1 font-bold">Pupuk & Bibit Unggul</p>
+          </div>
+          <div className="bg-white rounded-[2rem] p-5 shadow-sm border border-gray-100">
+             <div className="w-10 h-10 bg-blue-50 text-blue-500 rounded-xl flex items-center justify-center mb-3"><MessageCircle size={20}/></div>
+             <h4 className="font-black text-gray-800 text-xs uppercase tracking-tight">Konsultasi</h4>
+             <p className="text-[10px] text-gray-400 mt-1 font-bold">Tanya Langsung Ahli</p>
           </div>
         </div>
       </div>
@@ -198,41 +158,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-24 font-sans animate-in slide-in-from-bottom-4 duration-500 relative">
-      
-      {/* --- SIMULASI MODAL TOPUP --- */}
-      {topupStep !== 'none' && (
-        <div className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm flex items-end justify-center p-4">
-          <div className="bg-white w-full max-w-md rounded-[3rem] p-8 animate-in slide-in-from-bottom duration-300">
-            <div className="flex justify-between items-center mb-6">
-              <h3 className="text-xl font-black">{topupStep === 'nominal' ? 'Pilih Nominal' : 'Pilih Metode'}</h3>
-              <button onClick={() => setTopupStep('none')} className="p-2 bg-gray-100 rounded-full"><X size={20}/></button>
-            </div>
-
-            {topupStep === 'nominal' ? (
-              <div className="grid grid-cols-2 gap-3">
-                {[50000, 100000, 250000, 500000].map(amt => (
-                  <button key={amt} onClick={() => { setSelectedAmount(amt); setTopupStep('method'); }} className="py-5 border-2 border-gray-100 rounded-[1.5rem] font-black hover:border-green-500 transition-all">
-                    {formatCurrency(amt)}
-                  </button>
-                ))}
-              </div>
-            ) : (
-              <div className="space-y-3">
-                <button onClick={() => setTopupStep('none')} className="w-full p-4 border border-gray-100 rounded-2xl flex items-center gap-4 hover:bg-gray-50 transition-all">
-                  <div className="w-10 h-10 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center"><Building2 size={20}/></div>
-                  <div className="text-left"><p className="font-black text-sm">Transfer Bank</p><p className="text-[10px] text-gray-400">VA Mandiri, BCA, BRI</p></div>
-                </button>
-                <button onClick={() => setTopupStep('none')} className="w-full p-4 border border-gray-100 rounded-2xl flex items-center gap-4 hover:bg-gray-50 transition-all">
-                  <div className="w-10 h-10 bg-green-50 text-green-600 rounded-xl flex items-center justify-center"><QrCode size={20}/></div>
-                  <div className="text-left"><p className="font-black text-sm">QRIS</p><p className="text-[10px] text-gray-400">Gopay, OVO, Dana, LinkAja</p></div>
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-
+    <div className="min-h-screen bg-gray-50 pb-24 font-sans animate-in slide-in-from-bottom-4 duration-500">
       {/* Header */}
       <div className="bg-white px-6 pt-12 pb-8 rounded-b-[3rem] shadow-sm relative overflow-hidden">
         <div className="absolute top-0 right-0 w-32 h-32 bg-green-50 rounded-full -mr-16 -mt-16 z-0" />
@@ -243,13 +169,16 @@ const ProfileView: React.FC<ProfileViewProps> = ({
           </div>
           <div className="flex items-center gap-5 mb-8">
             <div className="relative">
-              <img src={userData?.avatar || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200'} className="w-20 h-20 rounded-[2rem] object-cover ring-4 ring-gray-50 shadow-md" />
+              <img 
+                src={userData?.avatar || (userRole === 'consumer' ? 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200' : 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=200')} 
+                alt="Profile" className="w-20 h-20 rounded-[2rem] object-cover ring-4 ring-gray-50 shadow-md" 
+              />
               <button className="absolute -bottom-1 -right-1 w-8 h-8 bg-green-500 border-4 border-white rounded-xl flex items-center justify-center shadow-lg"><Edit2 size={12} className="text-white" /></button>
             </div>
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-1">
                 <h2 className="font-black text-xl text-gray-900 leading-tight">{userData?.name || (userRole === 'consumer' ? 'Budi Santoso' : 'Dr. Bambang S.')}</h2>
-                <ShieldCheck size={18} className="text-blue-500" />
+                {userData?.isVerified !== false && <ShieldCheck size={18} className="text-blue-500" />}
               </div>
               <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">{userRole === 'consumer' ? 'Petani Milenial' : 'Spesialis Hidroponik'}</p>
             </div>
@@ -261,83 +190,39 @@ const ProfileView: React.FC<ProfileViewProps> = ({
         </div>
       </div>
 
-      {/* Wallet Card - Synced with ConsultationModal Style */}
-      {userRole === 'consumer' && (
-        <div className="px-6 -mt-6 relative z-20">
-          <div className="bg-green-500 rounded-[2.5rem] p-6 shadow-2xl shadow-green-200 border border-green-400 overflow-hidden relative">
-            
-            {/* Dekorasi Cahaya (Glossy Effect) */}
-            <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full blur-3xl -mr-10 -mt-10" />
-            <div className="absolute bottom-0 left-0 w-24 h-24 bg-black/5 rounded-full blur-2xl -ml-12 -mb-12" />
-            
-            <div className="flex justify-between items-start mb-6 relative z-10">
-              <div>
-                <p className="text-green-100 text-[10px] font-black uppercase tracking-[0.2em] mb-1">
-                  Saldo TaniPoin
-                </p>
-                <div className="flex items-center gap-2">
-                  <div className="w-6 h-6 bg-white rounded-full flex items-center justify-center shadow-lg">
-                    <Zap size={10} className="text-green-500 fill-green-500" />
-                  </div>
-                  <h3 className="text-white text-3xl font-black tracking-tighter">
-                    {formatCurrency(userData?.points || 1250000).replace('Rp', 'Rp ')}
-                  </h3>
-                </div>
-              </div>
-              {/* <button 
-                onClick={() => setTopupStep('nominal')} 
-                className="group relative bg-white p-3 rounded-2xl active:scale-90 transition-all shadow-xl shadow-black/10 overflow-hidden"
-              >
-                <div className="absolute inset-0 bg-green-500/10 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 skew-x-12" />
-                <PlusCircle size={24} className="text-green-600 relative z-10" />
-              </button> */}
-            </div>
-            
-            <div className="grid grid-cols-2 gap-3 relative z-10">
-              <button 
-                onClick={() => setTopupStep('nominal')} 
-                className="group relative bg-white border border-white/30 backdrop-blur-md py-4 rounded-[1.5rem] flex items-center justify-center gap-2 transition-all active:scale-95 overflow-hidden"
-              >
-                <div className="absolute inset-0 bg-white/10 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 skew-x-12" />
-                <PlusCircle size={16} className="text-green-600" />
-                <span className="text-green-600 text-[10px] font-black uppercase tracking-[0.15em]">Top Up</span>
-              </button>
-              
-              <button 
-                onClick={() => setCurrentView('wallet')} 
-                className="group relative bg-white border border-white/30 backdrop-blur-md py-4 rounded-[1.5rem] flex items-center justify-center gap-2 transition-all active:scale-95 overflow-hidden"
-              >
-                <div className="absolute inset-0 bg-white/10 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 skew-x-12" />
-                <History size={16} className="text-green-600" />
-                <span className="text-green-600 text-[10px] font-black uppercase tracking-[0.15em]">Riwayat</span>
-              </button>
-            </div>
+      {/* Stats */}
+      <div className="px-6 -mt-6 relative z-20">
+        <div className="bg-white rounded-[2rem] shadow-xl shadow-gray-200/50 p-6 flex justify-between border border-gray-50">
+          <div className="text-center flex-1">
+            <p className="text-lg font-black text-gray-900">{userRole === 'consumer' ? '12' : '2.4k'}</p>
+            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Sesi</p>
+          </div>
+          <div className="w-px bg-gray-100 mx-2" />
+          <div className="text-center flex-1">
+            <p className="text-lg font-black text-gray-900">{userRole === 'consumer' ? '5' : '12'}</p>
+            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{userRole === 'consumer' ? 'Order' : 'Artikel'}</p>
+          </div>
+          <div className="w-px bg-gray-100 mx-2" />
+          <div className="text-center flex-1">
+            <p className="text-lg font-black text-gray-900">{userRole === 'consumer' ? '28' : '4.9'}</p>
+            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{userRole === 'consumer' ? 'Simpan' : 'Rating'}</p>
           </div>
         </div>
-      )}
-
-      {/* Stats Section (Hanya untuk Ahli) */}
-      {userRole === 'expert' && (
-        <div className="px-6 -mt-6 relative z-20">
-          <div className="bg-white rounded-[2rem] shadow-xl shadow-gray-200/50 p-6 flex justify-between border border-gray-50">
-            <div className="text-center flex-1"><p className="text-lg font-black text-gray-900">2.4k</p><p className="text-[10px] font-black text-gray-400 uppercase">Sesi</p></div>
-            <div className="w-px bg-gray-100 mx-2" />
-            <div className="text-center flex-1"><p className="text-lg font-black text-gray-900">12</p><p className="text-[10px] font-black text-gray-400 uppercase">Artikel</p></div>
-            <div className="w-px bg-gray-100 mx-2" />
-            <div className="text-center flex-1"><p className="text-lg font-black text-gray-900">4.9</p><p className="text-[10px] font-black text-gray-400 uppercase">Rating</p></div>
-          </div>
-        </div>
-      )}
+      </div>
 
       {/* Menu List */}
-      <div className="p-6 space-y-8 mt-4">
+      <div className="p-6 space-y-8">
         <div>
           <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-4 ml-2">Aktivitas Saya</h3>
           <div className="bg-white rounded-[2.2rem] shadow-sm overflow-hidden border border-gray-100">
             {(userRole === 'consumer' ? consumerMenuItems : expertMenuItems).map((item, index, arr) => {
               const Icon = item.icon;
               return (
-                <button key={item.label} onClick={() => item.action && item.action()} className={`w-full flex items-center gap-4 p-5 hover:bg-gray-50 transition-all active:scale-[0.98] ${index !== arr.length - 1 ? 'border-b border-gray-50' : ''}`}>
+                <button
+                  key={item.label}
+                  onClick={() => item.action && item.action()}
+                  className={`w-full flex items-center gap-4 p-5 hover:bg-gray-50 transition-all active:scale-[0.98] ${index !== arr.length - 1 ? 'border-b border-gray-50' : ''}`}
+                >
                   <div className={`w-12 h-12 rounded-2xl ${item.bg} ${item.color} flex items-center justify-center shadow-sm`}><Icon size={22} /></div>
                   <span className="flex-1 text-left font-extrabold text-gray-700 text-sm">{item.label}</span>
                   {item.badge && <span className="bg-red-500 text-white text-[10px] font-black px-2.5 py-1 rounded-lg shadow-lg shadow-red-100">{item.badge}</span>}
@@ -364,7 +249,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({
           </div>
         </div>
 
-        <button onClick={onLogout} className="w-full flex items-center justify-center gap-3 p-5 bg-red-50 text-red-600 rounded-[2rem] font-black uppercase text-xs tracking-widest active:scale-95 transition-transform">
+        <button onClick={onLogout} className="w-full flex items-center justify-center gap-3 p-5 bg-red-50 text-red-600 rounded-[2rem] font-black uppercase text-xs tracking-widest border border-red-100/50">
           <LogOut size={18} /> Keluar Akun
         </button>
       </div>
