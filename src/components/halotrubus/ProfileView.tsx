@@ -3,7 +3,7 @@ import {
   User, Settings, ShoppingBag, MessageCircle, Heart, 
   CreditCard, Bell, HelpCircle, LogOut, ChevronRight,
   Edit2, LogIn, ShieldCheck, FileText, Wallet, ArrowLeft,
-  LucideIcon
+  LucideIcon, Star, Ticket
 } from 'lucide-react';
 
 // --- DATA DUMMY ---
@@ -22,7 +22,7 @@ interface MenuItem {
   badge?: string;
   color: string;
   bg: string;
-  action?: () => void; // Opsional agar tidak error
+  action?: () => void;
 }
 
 interface UserData {
@@ -33,6 +33,7 @@ interface UserData {
   role: 'consumer' | 'expert';
   avatar: string;
   isVerified: boolean;
+  points: number; // Menambahkan informasi poin
 }
 
 interface ProfileViewProps {
@@ -62,7 +63,6 @@ const ProfileView: React.FC<ProfileViewProps> = ({
     }).format(val);
   };
 
-  // Menu Items dengan Tipe Data MenuItem[]
   const consumerMenuItems: MenuItem[] = [
     { 
       icon: ShoppingBag, 
@@ -73,6 +73,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({
       action: () => setCurrentView('orders')
     },
     { icon: MessageCircle, label: 'Riwayat Konsultasi', badge: '3', color: 'text-blue-600', bg: 'bg-blue-50' },
+    { icon: Ticket, label: 'Voucher Saya', color: 'text-orange-600', bg: 'bg-orange-50' },
     { icon: Heart, label: 'Produk Favorit', color: 'text-red-600', bg: 'bg-red-50' },
     { icon: CreditCard, label: 'Metode Pembayaran', color: 'text-purple-600', bg: 'bg-purple-50' },
   ];
@@ -126,32 +127,90 @@ const ProfileView: React.FC<ProfileViewProps> = ({
     );
   }
 
-  if (!isLoggedIn) {
+ if (!isLoggedIn) {
     return (
-      <div className="min-h-screen bg-gray-50 pb-24 font-sans animate-in fade-in duration-500">
-        <div className="bg-white px-6 pt-12 pb-10 rounded-b-[3rem] shadow-sm">
-          <div className="text-center">
-            <div className="w-24 h-24 bg-gray-100 rounded-[2.5rem] flex items-center justify-center mx-auto mb-6">
-              <User size={48} className="text-gray-300" />
+      <div className="min-h-screen bg-gray-50 pb-24 font-sans animate-in fade-in duration-700">
+        {/* Hero Section */}
+        <div className="bg-white px-8 pt-20 pb-12 rounded-b-[4rem] shadow-sm relative overflow-hidden">
+          {/* Dekorasi Background */}
+          <div className="absolute top-0 right-0 w-64 h-64 bg-green-50 rounded-full -mr-32 -mt-32 z-0" />
+          <div className="absolute bottom-0 left-0 w-32 h-32 bg-blue-50 rounded-full -ml-16 -mb-16 z-0" />
+          
+          <div className="relative z-10 text-center">
+            <div className="w-28 h-28 bg-gradient-to-br from-green-400 to-green-600 rounded-[3rem] flex items-center justify-center mx-auto mb-8 shadow-2xl shadow-green-200 rotate-3">
+              <User size={56} className="text-white" />
             </div>
-            <h1 className="text-2xl font-black text-gray-900 mb-2">Mulai Perjalanan Anda</h1>
-            <p className="text-gray-400 text-sm mb-8 font-medium">Masuk untuk akses konsultasi ahli dan belanja kebutuhan tani</p>
-            <button onClick={onLoginClick} className="w-full py-4 bg-green-500 text-white font-black uppercase tracking-widest rounded-2xl shadow-xl flex items-center justify-center gap-3">
-              <LogIn size={20} /> Masuk Sekarang
+            
+            <h1 className="text-3xl font-black text-gray-900 mb-3 tracking-tight leading-tight">
+              Mulai Perjalanan <br/> Pertanian Anda
+            </h1>
+            <p className="text-gray-500 text-sm mb-10 font-medium max-w-[240px] mx-auto leading-relaxed">
+              Bergabunglah dengan komunitas petani modern dan akses ribuan solusi pertanian.
+            </p>
+            
+            <button 
+              onClick={onLoginClick} 
+              className="w-full py-5 bg-green-500 text-white font-black uppercase tracking-[0.15em] text-xs rounded-2xl shadow-xl active:scale-[0.97] transition-all flex items-center justify-center gap-3"
+            >
+              <LogIn size={18} /> Masuk ke Akun
             </button>
+            
+            <p className="mt-6 text-[11px] font-bold text-gray-400 uppercase tracking-widest">
+              Belum punya akun? <span className="text-green-600 underline">Daftar Sekarang</span>
+            </p>
           </div>
         </div>
-        <div className="p-6 grid grid-cols-2 gap-4">
-          <div className="bg-white rounded-[2rem] p-5 shadow-sm border border-gray-50">
-             <div className="w-10 h-10 bg-green-50 text-green-500 rounded-xl flex items-center justify-center mb-3"><ShoppingBag size={20}/></div>
-             <h4 className="font-black text-gray-800 text-xs uppercase tracking-tight">Belanja Mudah</h4>
-             <p className="text-[10px] text-gray-400 mt-1 font-bold">Pupuk & Bibit Unggul</p>
+
+        {/* Features Grid */}
+        <div className="p-6">
+          <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-6 ml-2 text-center">
+            Mengapa Bergabung?
+          </h3>
+          
+          <div className="grid grid-cols-2 gap-4">
+            {/* Feature 1 */}
+            <div className="bg-white rounded-[2.5rem] p-6 shadow-sm border border-gray-100 flex flex-col items-center text-center">
+               <div className="w-14 h-14 bg-green-50 text-green-500 rounded-2xl flex items-center justify-center mb-4">
+                <ShoppingBag size={24}/>
+               </div>
+               <h4 className="font-black text-gray-800 text-[11px] uppercase tracking-tight mb-1">Belanja Tani</h4>
+               <p className="text-[10px] text-gray-400 font-bold leading-relaxed">Akses produk original & berkualitas</p>
+            </div>
+
+            {/* Feature 2 */}
+            <div className="bg-white rounded-[2.5rem] p-6 shadow-sm border border-gray-100 flex flex-col items-center text-center">
+               <div className="w-14 h-14 bg-blue-50 text-blue-500 rounded-2xl flex items-center justify-center mb-4">
+                <MessageCircle size={24}/>
+               </div>
+               <h4 className="font-black text-gray-800 text-[11px] uppercase tracking-tight mb-1">Tanya Ahli</h4>
+               <p className="text-[10px] text-gray-400 font-bold leading-relaxed">Konsultasi masalah lahan secara privat</p>
+            </div>
+
+            {/* Feature 3 */}
+            <div className="bg-white rounded-[2.5rem] p-6 shadow-sm border border-gray-100 flex flex-col items-center text-center">
+               <div className="w-14 h-14 bg-orange-50 text-orange-500 rounded-2xl flex items-center justify-center mb-4">
+                <Star size={24}/>
+               </div>
+               <h4 className="font-black text-gray-800 text-[11px] uppercase tracking-tight mb-1">TaniPoints</h4>
+               <p className="text-[10px] text-gray-400 font-bold leading-relaxed">Kumpulkan poin & klaim voucher</p>
+            </div>
+
+            {/* Feature 4 */}
+            <div className="bg-white rounded-[2.5rem] p-6 shadow-sm border border-gray-100 flex flex-col items-center text-center">
+               <div className="w-14 h-14 bg-purple-50 text-purple-500 rounded-2xl flex items-center justify-center mb-4">
+                <ShieldCheck size={24}/>
+               </div>
+               <h4 className="font-black text-gray-800 text-[11px] uppercase tracking-tight mb-1">Terverifikasi</h4>
+               <p className="text-[10px] text-gray-400 font-bold leading-relaxed">Komunitas aman & terpercaya</p>
+            </div>
           </div>
-          <div className="bg-white rounded-[2rem] p-5 shadow-sm border border-gray-100">
-             <div className="w-10 h-10 bg-blue-50 text-blue-500 rounded-xl flex items-center justify-center mb-3"><MessageCircle size={20}/></div>
-             <h4 className="font-black text-gray-800 text-xs uppercase tracking-tight">Konsultasi</h4>
-             <p className="text-[10px] text-gray-400 mt-1 font-bold">Tanya Langsung Ahli</p>
-          </div>
+        </div>
+
+        {/* Footer Note */}
+        <div className="px-10 text-center mt-4">
+          <p className="text-[10px] text-gray-300 font-medium leading-loose">
+            Dengan masuk, Anda menyetujui Ketentuan Layanan dan Kebijakan Privasi kami.
+          </p>
         </div>
       </div>
     );
@@ -190,12 +249,16 @@ const ProfileView: React.FC<ProfileViewProps> = ({
         </div>
       </div>
 
-      {/* Stats */}
+      {/* Stats Section with Point Information */}
       <div className="px-6 -mt-6 relative z-20">
         <div className="bg-white rounded-[2rem] shadow-xl shadow-gray-200/50 p-6 flex justify-between border border-gray-50">
           <div className="text-center flex-1">
-            <p className="text-lg font-black text-gray-900">{userRole === 'consumer' ? '12' : '2.4k'}</p>
-            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Sesi</p>
+            <p className="text-lg font-black text-green-600">
+              {userRole === 'consumer' ? (userData?.points?.toLocaleString() || '1.250') : '2.4k'}
+            </p>
+            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+              {userRole === 'consumer' ? 'TaniPoints' : 'Sesi'}
+            </p>
           </div>
           <div className="w-px bg-gray-100 mx-2" />
           <div className="text-center flex-1">
@@ -209,6 +272,32 @@ const ProfileView: React.FC<ProfileViewProps> = ({
           </div>
         </div>
       </div>
+
+      {/* Point Banner - Only for Consumer */}
+      {userRole === 'consumer' && (
+        <div className="px-6 mt-6">
+          <div className="bg-gradient-to-r from-green-600 to-emerald-500 rounded-[2.2rem] p-5 flex items-center justify-between shadow-lg shadow-green-100 relative overflow-hidden">
+            <div className="absolute top-0 right-0 opacity-10 translate-x-4 -translate-y-4">
+              <Star size={100} fill="white" />
+            </div>
+            <div className="flex items-center gap-4 relative z-10">
+              <div className="w-12 h-12 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center border border-white/30">
+                <Wallet className="text-white" size={24} />
+              </div>
+              <div>
+                <p className="text-white/80 text-[10px] font-black uppercase tracking-wider">Loyalty Rewards</p>
+                <div className="flex items-baseline gap-1">
+                  <span className="text-white text-xl font-black">{userData?.points?.toLocaleString() || '1.250'}</span>
+                  <span className="text-white/70 text-[10px] font-bold uppercase">Points</span>
+                </div>
+              </div>
+            </div>
+            <button className="bg-white text-green-600 px-5 py-2.5 rounded-xl text-[10px] font-black uppercase shadow-sm active:scale-95 transition-all relative z-10">
+              Tukar
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Menu List */}
       <div className="p-6 space-y-8">
@@ -249,7 +338,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({
           </div>
         </div>
 
-        <button onClick={onLogout} className="w-full flex items-center justify-center gap-3 p-5 bg-red-50 text-red-600 rounded-[2rem] font-black uppercase text-xs tracking-widest border border-red-100/50">
+        <button onClick={onLogout} className="w-full flex items-center justify-center gap-3 p-5 bg-red-50 text-red-600 rounded-[2rem] font-black uppercase text-xs tracking-widest border border-red-100/50 active:scale-95 transition-transform">
           <LogOut size={18} /> Keluar Akun
         </button>
       </div>
