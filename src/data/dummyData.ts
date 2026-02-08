@@ -24,6 +24,7 @@ export interface Expert {
   isOnline: boolean;
   bio: string;
   education: string;
+  isAi?: boolean; // New field for AI
 }
 
 export interface Article {
@@ -61,6 +62,21 @@ export interface User {
   role: 'consumer' | 'expert';
   avatar: string;
 }
+
+export interface Courier {
+  id: string;
+  name: string;
+  logo: string;
+  type: 'instant' | 'regular' | 'cargo';
+  price: number;
+  etd: string;
+}
+
+export const couriers: Courier[] = [
+  { id: 'gosend', name: 'GoSend Instant', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/86/Gopay_logo.svg/2560px-Gopay_logo.svg.png', type: 'instant', price: 25000, etd: '1-2 jam' },
+  { id: 'jne', name: 'JNE Regular', logo: 'https://upload.wikimedia.org/wikipedia/commons/9/92/New_Logo_JNE.png', type: 'regular', price: 12000, etd: '2-3 hari' },
+  { id: 'sicepat', name: 'SiCepat Gokil', logo: 'https://upload.wikimedia.org/wikipedia/commons/8/87/SiCepat_Ekspres.png', type: 'cargo', price: 45000, etd: '3-5 hari' },
+];
 
 // Dummy Data
 export const products: Product[] = [
@@ -464,6 +480,20 @@ export const experts: Expert[] = [
     isOnline: true,
     bio: 'Spesialis budidaya sayuran dan buah-buahan tropis.',
     education: 'S2 Hortikultura - Universitas Brawijaya'
+  },
+  {
+    id: 'ai-bot',
+    name: 'Trubus AI Assistant',
+    specialization: 'Asisten Pintar',
+    experience: 0,
+    rating: 5.0,
+    consultations: 9999,
+    price: 0,
+    image: 'https://cdn-icons-png.flaticon.com/512/4712/4712027.png',
+    isOnline: true,
+    bio: 'Asisten AI pintar yang siap membantu menjawab pertanyaan seputar pertanian kapan saja.',
+    education: 'Trubus AI Knowledge Base',
+    isAi: true
   }
 ];
 

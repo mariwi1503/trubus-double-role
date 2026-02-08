@@ -49,10 +49,10 @@ const AppLayout: React.FC = () => {
   // Modal states
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isProductModalOpen, setIsProductModalOpen] = useState(false);
-  
+
   const [selectedExpert, setSelectedExpert] = useState<Expert | null>(null);
   const [isConsultModalOpen, setIsConsultModalOpen] = useState(false);
-  
+
   const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
   const [isArticleModalOpen, setIsArticleModalOpen] = useState(false);
 
@@ -69,13 +69,13 @@ const AppLayout: React.FC = () => {
     let role: 'consumer' | 'expert' = 'consumer';
     let name = 'Budi Santoso';
     let avatar = 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200';
-    
+
     if (email.includes('ahli')) {
       role = 'expert';
       name = 'Dr. Siti Nurhaliza';
       avatar = 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=200';
     }
-    
+
     const mockUser: UserData = {
       id: '1',
       name: name,
@@ -100,7 +100,7 @@ const AppLayout: React.FC = () => {
       email: data.email,
       phone: data.phone,
       role: data.role,
-      avatar: data.role === 'consumer' 
+      avatar: data.role === 'consumer'
         ? 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200'
         : 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=200',
       isVerified: false
@@ -193,8 +193,8 @@ const AppLayout: React.FC = () => {
       return;
     }
     setIsConsultModalOpen(false);
-    setSuccessModal({ 
-      isOpen: true, 
+    setSuccessModal({
+      isOpen: true,
       type: 'consultation',
       message: `Konsultasi dengan ${expert.name} pada ${date} pukul ${time} berhasil dipesan.`
     });
@@ -319,7 +319,8 @@ const AppLayout: React.FC = () => {
         cartItems={cartItems}
         onUpdateQuantity={updateCartQuantity}
         onRemoveItem={removeFromCart}
-        onCheckout={handleCheckout}
+        onClearCart={handleCheckout}
+        onProductClick={handleProductClick}
       />
 
       <ProductDetailModal
