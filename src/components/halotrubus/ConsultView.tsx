@@ -132,7 +132,7 @@ const ConsultView: React.FC<ConsultViewProps> = ({ onExpertClick, userRole = 'co
                 <p className="text-xs font-medium text-blue-100 opacity-90">Dapatkan jawaban instan untuk masalah tanamanmu.</p>
               </div>
               <div className="ml-auto bg-white text-blue-600 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg">
-                Coba Gratis
+                Chat
               </div>
             </div>
           </div>
