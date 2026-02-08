@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Send, ArrowLeft, Bot, User as UserIcon, Loader2, Image as ImageIcon, Sparkles } from 'lucide-react';
+import { Send, ArrowLeft, Bot, User as UserIcon, Loader2, Image as ImageIcon, Sparkles, X } from 'lucide-react';
 import { Expert } from '@/data/dummyData';
 
 interface Message {
@@ -9,6 +9,7 @@ interface Message {
     sender: 'user' | 'expert' | 'system';
     time: string;
     isAi?: boolean;
+    image?: string;
 }
 
 interface ChatRoomProps {
@@ -45,7 +46,9 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ expert, onClose, initialMessages = 
     const [messages, setMessages] = useState<Message[]>(initialMessages.length > 0 ? initialMessages : defaultMessages);
     const [inputText, setInputText] = useState('');
     const [isTyping, setIsTyping] = useState(false);
+    const [selectedImage, setSelectedImage] = useState<string | null>(null);
     const messagesEndRef = useRef<HTMLDivElement>(null);
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -55,24 +58,47 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ expert, onClose, initialMessages = 
         scrollToBottom();
     }, [messages, isTyping]);
 
+    const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file && file.type.startsWith('image/')) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setSelectedImage(reader.result as string);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const handleRemoveImage = () => {
+        setSelectedImage(null);
+        if (fileInputRef.current) {
+            fileInputRef.current.value = '';
+        }
+    };
+
     const handleSend = () => {
-        if (!inputText.trim()) return;
+        if (!inputText.trim() && !selectedImage) return;
 
         const userMsg: Message = {
             id: Date.now().toString(),
-            text: inputText,
+            text: inputText || (selectedImage ? '📷 Gambar' : ''),
             sender: 'user',
-            time: formatTime(new Date())
+            time: formatTime(new Date()),
+            image: selectedImage || undefined
         };
 
         setMessages(prev => [...prev, userMsg]);
         setInputText('');
+        setSelectedImage(null);
+        if (fileInputRef.current) {
+            fileInputRef.current.value = '';
+        }
 
         // AI Logic
         if (expert.isAi) {
             setIsTyping(true);
             setTimeout(() => {
-                const aiResponse = generateAiResponse(inputText);
+                const aiResponse = generateAiResponse(inputText, !!selectedImage);
                 const aiMsg: Message = {
                     id: (Date.now() + 1).toString(),
                     text: aiResponse,
@@ -86,9 +112,21 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ expert, onClose, initialMessages = 
         }
     };
 
-    const generateAiResponse = (input: string): string => {
+    const generateAiResponse = (input: string, hasImage: boolean = false): string => {
         const lowerInput = input.toLowerCase();
 
+        // Response for image uploads
+        if (hasImage) {
+            if (lowerInput.includes('kuning') || lowerInput.includes('daun')) {
+                return "Terima kasih sudah mengirimkan fotonya! Dari deskripsi daun menguning, kemungkinan besar ini masalah nutrisi atau pengairan. Daun menguning bisa disebabkan oleh kekurangan Nitrogen, kelebihan/kekurangan air, atau kurang sinar matahari. Coba cek kelembaban tanahnya dan pastikan tanaman mendapat cahaya cukup ya.";
+            }
+            if (lowerInput.includes('hama') || lowerInput.includes('kutu')) {
+                return "Terima kasih fotonya! Untuk mengatasi hama, saya sarankan: 1) Semprotkan air sabun cair (1 sdm sabun + 1 liter air) pada bagian yang terkena hama, 2) Gunakan pestisida nabati dari bawang putih atau cabai, 3) Semprot di pagi atau sore hari. Ulangi setiap 3 hari sampai hama hilang.";
+            }
+            return "Terima kasih sudah mengirimkan fotonya! Dari gambar yang Anda kirim, saya bisa membantu menganalisis kondisi tanaman. Bisa dijelaskan lebih detail apa masalah yang Anda alami? Misalnya: pertumbuhan lambat, daun menguning, ada hama, atau lainnya?";
+        }
+
+        // Regular text responses
         if (lowerInput.includes('kuning') || lowerInput.includes('daun')) {
             return "Daun menguning bisa disebabkan oleh beberapa hal: kekurangan air, kelebihan air, atau kekurangan nutrisi (biasanya Nitrogen). Coba cek kelembaban tanahnya dulu ya. Apakah tanahnya terasa terlalu kering atau justru becek?";
         }
@@ -101,7 +139,7 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ expert, onClose, initialMessages = 
         if (lowerInput.includes('terima kasih') || lowerInput.includes('makasih')) {
             return "Sama-sama! Semoga tanamannya tumbuh subur ya. Jangan ragu tanya lagi kalau ada masalah lain. 🌱";
         }
-        return "Maaf, saya masih belajar. Bisa dijelaskan lebih detail lagi kondisi tanamannya? Atau mungkin bisa kirimkan foto tanamannya (fitur foto segera hadir!).";
+        return "Maaf, saya masih belajar. Bisa dijelaskan lebih detail lagi kondisi tanamannya? Atau mungkin bisa kirimkan foto tanamannya untuk analisis lebih akurat!";
     };
 
     return (
@@ -156,6 +194,15 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ expert, onClose, initialMessages = 
                                     <span className="text-[10px] font-black text-blue-400 uppercase tracking-wider">AI Answer</span>
                                 </div>
                             )}
+                            {msg.image && (
+                                <div className="mb-3">
+                                    <img
+                                        src={msg.image}
+                                        alt="Attachment"
+                                        className="rounded-xl max-w-full h-auto max-h-64 object-cover"
+                                    />
+                                </div>
+                            )}
                             <p>{msg.text}</p>
                             <p className={`text-[9px] mt-2 font-bold uppercase tracking-wider ${msg.sender === 'user' ? 'text-green-100' : 'text-gray-400'}`}>
                                 {msg.time}
@@ -177,8 +224,35 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ expert, onClose, initialMessages = 
 
             {/* Input Area */}
             <div className="p-4 border-t bg-white pb-8">
+                {/* Image Preview */}
+                {selectedImage && (
+                    <div className="mb-3 relative inline-block">
+                        <img
+                            src={selectedImage}
+                            alt="Preview"
+                            className="rounded-xl max-h-32 object-cover border-2 border-green-500"
+                        />
+                        <button
+                            onClick={handleRemoveImage}
+                            className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1.5 hover:bg-red-600 transition-colors shadow-lg"
+                        >
+                            <X size={16} />
+                        </button>
+                    </div>
+                )}
+
                 <div className="flex items-end gap-2 bg-gray-100 rounded-[1.5rem] px-2 py-2 border border-transparent focus-within:border-green-500/30 focus-within:bg-green-50/30 transition-all">
-                    <button className="p-3 text-gray-400 hover:text-green-600 hover:bg-green-100 rounded-full transition-colors">
+                    <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageSelect}
+                        className="hidden"
+                    />
+                    <button
+                        onClick={() => fileInputRef.current?.click()}
+                        className="p-3 text-gray-400 hover:text-green-600 hover:bg-green-100 rounded-full transition-colors"
+                    >
                         <ImageIcon size={20} />
                     </button>
                     <textarea
@@ -197,7 +271,7 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ expert, onClose, initialMessages = 
                     />
                     <button
                         onClick={handleSend}
-                        disabled={!inputText.trim() || isTyping}
+                        disabled={(!inputText.trim() && !selectedImage) || isTyping}
                         className="bg-green-500 p-3 rounded-xl text-white shadow-lg shadow-green-100 hover:bg-green-600 disabled:bg-gray-300 disabled:shadow-none transition-all active:scale-95"
                     >
                         <Send size={18} />

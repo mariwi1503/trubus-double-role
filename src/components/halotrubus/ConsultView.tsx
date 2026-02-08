@@ -191,35 +191,29 @@ const ConsultView: React.FC<ConsultViewProps> = ({ onExpertClick, userRole = 'co
       )}
 
       {/* --- MODAL CHAT ROOM --- */}
-      {showChatRoom && activeConsultation && (
-        <div className="fixed inset-0 z-[100] bg-white flex flex-col animate-in slide-in-from-right duration-300">
-          <div className="p-6 border-b flex items-center gap-4 bg-white sticky top-0 shadow-sm">
-            <button onClick={() => setShowChatRoom(false)} className="p-2 bg-gray-50 rounded-full"><ArrowLeft size={24} /></button>
-            <div className="flex items-center gap-3">
-              <img src={activeConsultation.expertImage} className="w-10 h-10 rounded-full object-cover" alt="" />
-              <div>
-                <h4 className="font-black text-gray-900 text-sm leading-tight">{activeConsultation.expertName}</h4>
-                <div className="flex items-center gap-1.5">
-                  <div className="w-1.5 h-1.5 rounded-full bg-green-500" />
-                  <p className="text-[10px] font-bold text-gray-400 uppercase">Online</p>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="flex-1 bg-gray-50 p-6 overflow-y-auto space-y-4">
-            <div className="bg-white p-4 rounded-2xl rounded-tl-none shadow-sm border border-gray-100 max-w-[85%]">
-              <p className="text-sm text-gray-800 font-medium">Selamat datang! Silahkan deskripsikan permasalahan tanaman Anda, sertakan foto jika ada.</p>
-              <p className="text-[9px] text-gray-400 mt-2 font-bold uppercase">10:05 AM</p>
-            </div>
-          </div>
-          <div className="p-6 border-t bg-white">
-            <div className="flex items-center gap-3 bg-gray-100 rounded-[1.5rem] px-5 py-2">
-              <input type="text" placeholder="Tulis pesan..." className="bg-transparent flex-1 outline-none text-sm py-2" />
-              <button className="bg-green-500 p-2.5 rounded-xl text-white shadow-lg shadow-green-100"><Send size={18} /></button>
-            </div>
-          </div>
-        </div>
-      )}
+      {showChatRoom && activeConsultation && (() => {
+        // Find the expert from the consultation
+        const expert = experts.find(e => e.name === activeConsultation.expertName) || {
+          id: 'temp',
+          name: activeConsultation.expertName,
+          image: activeConsultation.expertImage,
+          specialization: 'Ahli Pertanian',
+          experience: 10,
+          rating: 4.8,
+          consultations: 100,
+          price: activeConsultation.price,
+          isOnline: true,
+          bio: 'Ahli pertanian berpengalaman',
+          education: 'S2 Pertanian'
+        };
+
+        return (
+          <ChatRoom
+            expert={expert}
+            onClose={() => setShowChatRoom(false)}
+          />
+        );
+      })()}
 
       {/* --- MODAL PEMBAYARAN (SIMULASI) --- */}
       {showPayment && activeConsultation && (
