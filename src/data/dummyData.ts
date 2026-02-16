@@ -72,10 +72,24 @@ export interface Courier {
   etd: string;
 }
 
+export interface Store {
+  id: string;
+  name: string;
+  address: string;
+  distance: string;
+  isMain?: boolean;
+}
+
 export const couriers: Courier[] = [
   { id: 'gosend', name: 'GoSend Instant', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/86/Gopay_logo.svg/2560px-Gopay_logo.svg.png', type: 'instant', price: 25000, etd: '1-2 jam' },
   { id: 'jne', name: 'JNE Regular', logo: 'https://upload.wikimedia.org/wikipedia/commons/9/92/New_Logo_JNE.png', type: 'regular', price: 12000, etd: '2-3 hari' },
   { id: 'sicepat', name: 'SiCepat Gokil', logo: 'https://upload.wikimedia.org/wikipedia/commons/8/87/SiCepat_Ekspres.png', type: 'cargo', price: 45000, etd: '3-5 hari' },
+];
+
+export const stores: Store[] = [
+  { id: '1', name: 'Toko Trubus - Cimanggis', address: 'Jl. Raya Bogor Km 30, Mekarsari, Cimanggis, Depok', distance: '2.5 km', isMain: true },
+  { id: '2', name: 'Toko Trubus - BSD', address: 'Jl. Pahlawan Seribu, Lengkong Gudang, Serpong, Tangerang Selatan', distance: '15 km' },
+  { id: '3', name: 'Toko Trubus - Gunung Putri', address: 'Jl. Raya Gunung Putri No. 12, Bogor', distance: '12 km' },
 ];
 
 // Dummy Data

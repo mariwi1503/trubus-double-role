@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { 
-  User, Settings, ShoppingBag, MessageCircle, Heart, 
+import {
+  User, Settings, ShoppingBag, MessageCircle, Heart,
   CreditCard, Bell, HelpCircle, LogOut, ChevronRight,
   Edit2, LogIn, ShieldCheck, FileText, Wallet, ArrowLeft,
-  LucideIcon
+  LucideIcon, Plus
 } from 'lucide-react';
 
 // --- DATA DUMMY ---
@@ -14,6 +14,9 @@ const ORDER_HISTORY_DUMMY = [
   { id: 'TRX-2024-004', date: '10 Jan 2024', status: 'Dibatalkan', total: 85000, items: 'Bibit Cabai Rawit Merah', image: 'https://images.unsplash.com/photo-1591857177580-dc82b9ac4e1e?w=200' },
   { id: 'TRX-2024-005', date: '02 Jan 2024', status: 'Selesai', total: 175000, items: 'Pot Tanaman Keramik Minimalis', image: 'https://images.unsplash.com/photo-1485841890310-6a055c88698a?w=200' }
 ];
+
+import CoinDashboard from './CoinDashboard';
+import { useTrubusCoin } from '@/context/TrubusCoinContext';
 
 // --- INTERFACES ---
 interface MenuItem {
@@ -44,15 +47,16 @@ interface ProfileViewProps {
   onLogout: () => void;
 }
 
-const ProfileView: React.FC<ProfileViewProps> = ({ 
-  userRole, 
-  onRoleChange, 
-  isLoggedIn, 
-  userData, 
+const ProfileView: React.FC<ProfileViewProps> = ({
+  userRole,
+  onRoleChange,
+  isLoggedIn,
+  userData,
   onLoginClick,
-  onLogout 
+  onLogout
 }) => {
-  const [currentView, setCurrentView] = useState<'profile' | 'orders'>('profile');
+  const [currentView, setCurrentView] = useState<'profile' | 'orders' | 'coin'>('profile');
+  const { balance } = useTrubusCoin();
 
   const formatCurrency = (val: number) => {
     return new Intl.NumberFormat('id-ID', {
@@ -64,11 +68,11 @@ const ProfileView: React.FC<ProfileViewProps> = ({
 
   // Menu Items dengan Tipe Data MenuItem[]
   const consumerMenuItems: MenuItem[] = [
-    { 
-      icon: ShoppingBag, 
-      label: 'Pesanan Saya', 
-      badge: '2', 
-      color: 'text-green-600', 
+    {
+      icon: ShoppingBag,
+      label: 'Pesanan Saya',
+      badge: '2',
+      color: 'text-green-600',
       bg: 'bg-green-50',
       action: () => setCurrentView('orders')
     },
@@ -89,6 +93,10 @@ const ProfileView: React.FC<ProfileViewProps> = ({
     { icon: HelpCircle, label: 'Pusat Bantuan', color: 'text-gray-400', bg: 'bg-gray-50' },
   ];
 
+  if (currentView === 'coin') {
+    return <CoinDashboard onBack={() => setCurrentView('profile')} />;
+  }
+
   if (currentView === 'orders') {
     return (
       <div className="min-h-screen bg-gray-50 pb-24 font-sans animate-in slide-in-from-right duration-300">
@@ -105,10 +113,9 @@ const ProfileView: React.FC<ProfileViewProps> = ({
               <div className="flex-1 flex flex-col justify-between py-1">
                 <div className="flex justify-between items-start">
                   <p className="text-[10px] font-black text-gray-400 uppercase">{order.id}</p>
-                  <span className={`text-[10px] font-black px-2 py-1 rounded-lg ${
-                    order.status === 'Selesai' ? 'bg-green-50 text-green-600' : 
+                  <span className={`text-[10px] font-black px-2 py-1 rounded-lg ${order.status === 'Selesai' ? 'bg-green-50 text-green-600' :
                     order.status === 'Dibatalkan' ? 'bg-red-50 text-red-600' : 'bg-blue-50 text-blue-600'
-                  }`}>{order.status}</span>
+                    }`}>{order.status}</span>
                 </div>
                 <h4 className="font-bold text-gray-800 text-sm line-clamp-1">{order.items}</h4>
                 <div className="flex justify-between items-end mt-1">
@@ -143,14 +150,14 @@ const ProfileView: React.FC<ProfileViewProps> = ({
         </div>
         <div className="p-6 grid grid-cols-2 gap-4">
           <div className="bg-white rounded-[2rem] p-5 shadow-sm border border-gray-50">
-             <div className="w-10 h-10 bg-green-50 text-green-500 rounded-xl flex items-center justify-center mb-3"><ShoppingBag size={20}/></div>
-             <h4 className="font-black text-gray-800 text-xs uppercase tracking-tight">Belanja Mudah</h4>
-             <p className="text-[10px] text-gray-400 mt-1 font-bold">Pupuk & Bibit Unggul</p>
+            <div className="w-10 h-10 bg-green-50 text-green-500 rounded-xl flex items-center justify-center mb-3"><ShoppingBag size={20} /></div>
+            <h4 className="font-black text-gray-800 text-xs uppercase tracking-tight">Belanja Mudah</h4>
+            <p className="text-[10px] text-gray-400 mt-1 font-bold">Pupuk & Bibit Unggul</p>
           </div>
           <div className="bg-white rounded-[2rem] p-5 shadow-sm border border-gray-100">
-             <div className="w-10 h-10 bg-blue-50 text-blue-500 rounded-xl flex items-center justify-center mb-3"><MessageCircle size={20}/></div>
-             <h4 className="font-black text-gray-800 text-xs uppercase tracking-tight">Konsultasi</h4>
-             <p className="text-[10px] text-gray-400 mt-1 font-bold">Tanya Langsung Ahli</p>
+            <div className="w-10 h-10 bg-blue-50 text-blue-500 rounded-xl flex items-center justify-center mb-3"><MessageCircle size={20} /></div>
+            <h4 className="font-black text-gray-800 text-xs uppercase tracking-tight">Konsultasi</h4>
+            <p className="text-[10px] text-gray-400 mt-1 font-bold">Tanya Langsung Ahli</p>
           </div>
         </div>
       </div>
@@ -169,9 +176,9 @@ const ProfileView: React.FC<ProfileViewProps> = ({
           </div>
           <div className="flex items-center gap-5 mb-8">
             <div className="relative">
-              <img 
-                src={userData?.avatar || (userRole === 'consumer' ? 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200' : 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=200')} 
-                alt="Profile" className="w-20 h-20 rounded-[2rem] object-cover ring-4 ring-gray-50 shadow-md" 
+              <img
+                src={userData?.avatar || (userRole === 'consumer' ? 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200' : 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=200')}
+                alt="Profile" className="w-20 h-20 rounded-[2rem] object-cover ring-4 ring-gray-50 shadow-md"
               />
               <button className="absolute -bottom-1 -right-1 w-8 h-8 bg-green-500 border-4 border-white rounded-xl flex items-center justify-center shadow-lg"><Edit2 size={12} className="text-white" /></button>
             </div>
@@ -190,8 +197,28 @@ const ProfileView: React.FC<ProfileViewProps> = ({
         </div>
       </div>
 
+      {/* Wallet Card */}
+      <div className="px-6 -mt-6 relative z-20 mb-6">
+        <div
+          onClick={() => setCurrentView('coin')}
+          className="bg-emerald-600 rounded-[2rem] shadow-xl shadow-emerald-200 p-6 flex items-center justify-between relative overflow-hidden active:scale-95 transition-transform cursor-pointer"
+        >
+          <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-10 -mt-10 blur-2xl" />
+          <div className="relative z-10 text-white">
+            <div className="flex items-center gap-2 mb-1 opacity-90">
+              <Wallet size={16} />
+              <span className="text-[10px] font-bold uppercase tracking-widest">Trubus Coin</span>
+            </div>
+            <p className="text-2xl font-black tracking-tighter">{formatCurrency(balance)}</p>
+          </div>
+          <div className="relative z-10 bg-white/20 p-2.5 rounded-xl backdrop-blur-sm">
+            <Plus size={24} className="text-white" />
+          </div>
+        </div>
+      </div>
+
       {/* Stats */}
-      <div className="px-6 -mt-6 relative z-20">
+      <div className="px-6 mb-8 relative z-20">
         <div className="bg-white rounded-[2rem] shadow-xl shadow-gray-200/50 p-6 flex justify-between border border-gray-50">
           <div className="text-center flex-1">
             <p className="text-lg font-black text-gray-900">{userRole === 'consumer' ? '12' : '2.4k'}</p>
