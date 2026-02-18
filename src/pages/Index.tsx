@@ -39,7 +39,7 @@ const MaintenancePage = () => {
         </p>
 
         {/* Developer Contact Button */}
-        <a 
+        {/* <a 
           href={waLink}
           target="_blank"
           rel="noopener noreferrer"
@@ -47,13 +47,12 @@ const MaintenancePage = () => {
         >
           <MessageCircle size={22} />
           Hubungi Developer via WhatsApp
-        </a>
+        </a> */}
 
         <hr className="my-12 border-gray-200" />
 
         {/* Jasa Iklan Section */}
-        <div className="bg-white border-2 border-dashed border-green-200 rounded-3xl p-8 relative overflow-hidden">
-          {/* Dekorasi Background */}
+        {/* <div className="bg-white border-2 border-dashed border-green-200 rounded-3xl p-8 relative overflow-hidden">
           <div className="absolute -right-4 -bottom-4 opacity-5 text-green-500">
             <Code2 size={120} />
           </div>
@@ -73,7 +72,7 @@ const MaintenancePage = () => {
             Konsultasi Proyek Anda Sekarang 
             <span className="group-hover:translate-x-1 transition-transform">→</span>
           </a>
-        </div>
+        </div> */}
 
         {/* Footer */}
         <p className="mt-10 text-gray-400 text-xs uppercase tracking-widest">
